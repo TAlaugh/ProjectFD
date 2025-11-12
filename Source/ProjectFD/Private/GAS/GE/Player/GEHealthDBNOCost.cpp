@@ -1,0 +1,29 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "GAS/GE/Player/GEHealthDBNOCost.h"
+
+#include "GAS/Player/PlayerAttributeSet.h"
+
+
+UGEHealthDBNOCost::UGEHealthDBNOCost()
+{
+	DurationPolicy = EGameplayEffectDurationType::Infinite;
+	// 주기적 실행
+	Period = FScalableFloat(0.1f);
+
+	// 적용 시 첫 Tick 실행 여부
+	bExecutePeriodicEffectOnApplication = true;
+
+	// 주기적 Tick 누락 처리 정책
+	PeriodicInhibitionPolicy = EGameplayEffectPeriodInhibitionRemovedPolicy::NeverReset;
+
+	FGameplayModifierInfo HealthModifier;
+	HealthModifier.Attribute = UPlayerAttributeSet::GetHealthAttribute();
+	HealthModifier.ModifierOp = EGameplayModOp::Additive;
+	
+	FSetByCallerFloat SBC;
+	SBC.DataTag = FGameplayTag::RequestGameplayTag(FName("Data.DBNO.Cost"));
+	HealthModifier.ModifierMagnitude = FGameplayEffectModifierMagnitude(SBC);
+	Modifiers.Add(HealthModifier);
+}
